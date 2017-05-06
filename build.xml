@@ -55,7 +55,8 @@
 		</move>
 	</target>
 
-	<target name="package" depends="moveToWorking">
+	<target name="package" depends="test, doc">
+<!--
 		<zip	destfile="StarShipSim.zip">
 			<fileset dir=".">
 				<include name="*.py"/>
@@ -64,6 +65,7 @@
 			</fileset>
 			<zipfileset dir="docs" includes="*.html" prefix="docs"/>
 		</zip>
+-->
 <!--
 		<tar destfile="StarShipSim.tgz" compression="gzip">
 			<tarfileset dir=".">
