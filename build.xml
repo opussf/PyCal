@@ -1,0 +1,81 @@
+<project name="PyCal" default="build">
+
+	<property name="src.dir" value="src"/>
+	<property name="test.dir" value="test"/>
+	<property name="working.dir" value="working"/>
+	<property name="target.dir" value="target"/>
+	<property name="doc.dir" value="${target.dir}/docs"/>
+	<property name="testResults.dir" value="${target.dir}/testResults"/>
+
+	<target name="clean">
+		<delete dir="${target.dir}"/>
+		<delete dir="${working.dir}"/>
+	</target>
+
+	<target name="cleanpyc">
+		<delete>
+			<fileset dir="${working.dir}" includes="*.pyc"/>
+		</delete>
+	</target>
+
+	<target name="moveToWorking">
+		<copy todir="${working.dir}">
+			<fileset dir="${src.dir}">
+				<include name="*.py"/>
+			</fileset>
+			<fileset dir="${test.dir}">
+				<include name="*.py"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="build" depends="test, doc">
+	</target>
+
+	<target name="doc" depends="moveToWorking">
+		<exec executable="pydoc" dir="${working.dir}">
+			<arg value="-w"/>
+			<arg value="./"/>
+		</exec>
+		<move todir="${doc.dir}">
+			<fileset dir="${working.dir}">
+				<include name="*.html"/>
+			</fileset>
+		</move>
+	</target>
+
+	<target name="test" depends="moveToWorking">
+		<exec executable="python" dir="${working.dir}">
+			<arg value="pyCalTestSuite.py" />
+		</exec>
+		<move todir="testResults">
+			<fileset dir=".">
+				<include name="TEST*.xml"/>
+			</fileset>
+		</move>
+	</target>
+
+	<target name="package" depends="moveToWorking">
+		<zip	destfile="StarShipSim.zip">
+			<fileset dir=".">
+				<include name="*.py"/>
+				<include name="*.xrc"/>
+				<exclude name="Test*"/>
+			</fileset>
+			<zipfileset dir="docs" includes="*.html" prefix="docs"/>
+		</zip>
+<!--
+		<tar destfile="StarShipSim.tgz" compression="gzip">
+			<tarfileset dir=".">
+				<include name="*.py"/>
+				<include name="*.xrc"/>
+				<exclude name="Test*"/>
+			</tarfileset>
+			<tarfileset dir="./docs" prefix="docs">
+				<include name="*.html"/>
+			</tarfileset>
+		</tar>
+-->
+	</target>
+
+</project>
