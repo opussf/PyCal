@@ -1,5 +1,46 @@
 <project name="PyCal" default="build">
 
+	<tstamp/>
+	<property file="build.properties"/>
+	<property environment="env"/>
+	<property name="env.BUILD_NUMBER" value=""/>
+	<property name="build.number" value=""/>
+
+	<!-- pull git repo info -->
+	<!-- Get the last tag reachable from this branch. git throws a 128 error if no tag -->
+	<exec executable="git" dir="." outputproperty="git.tag" failifexecutionfails="false" errorproperty="">
+		<arg line="describe --tags --abbrev=0" />
+	</exec>
+	<!-- Get a 'revision' based on last tag, commit count, commitsha, and branch name -->
+	<exec executable="git" dir="." outputproperty="git.revision" failifexecutionfails="false" errorproperty="">
+		<arg line="describe --tags --always HEAD" />
+	</exec>
+	<condition property="repository.version" value="${git.revision}" else="unknown">
+		<and>
+			<isset property="git.revision"/>
+			<length string="${git.revision}" trim="yes" length="0" when="greater"/>
+		</and>
+	</condition>
+	<!-- find git branch -->
+	<exec executable="git" dir="." outputproperty="git.branch" failifexecutionfails="false" errorproperty="">
+		<arg line="rev-parse --abbrev-ref HEAD"/>
+	</exec>
+	<condition property="branch" value="-${git.branch}" else="">
+		<and>
+			<isset property="git.branch"/>
+			<not>
+				<or>
+					<equals arg1="${git.branch}" arg2="master"/>
+					<equals arg1="${git.branch}" arg2="HEAD"/>
+				</or>
+			</not>
+		</and>
+	</condition>
+	<property name="version.number" value="${repository.version}${branch}${build.number}"/>
+	<echo>Building: ${version.number}</echo>
+	<filter token="VERSION" value="${version.number}"/>
+	<!-- end git repo info -->
+
 	<property name="src.dir" value="src"/>
 	<property name="test.dir" value="test"/>
 	<property name="working.dir" value="working"/>
@@ -19,7 +60,7 @@
 	</target>
 
 	<target name="moveToWorking">
-		<copy todir="${working.dir}">
+		<copy todir="${working.dir}" filtering="true">
 			<fileset dir="${src.dir}">
 				<include name="*.py"/>
 			</fileset>
