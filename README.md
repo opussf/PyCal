@@ -26,3 +26,10 @@ Another idea of giving small tasks an amount of time, and then doing them when y
 │   │              │              │              │              │              │
 └───┴──────────────┴──────────────┴──────────────┴──────────────┴──────────────┘
 ```
+
+
+# interface:
+
+-n, --new	      : create a new item
+-2, --todo        : todo items (filter or flag for what to create)
+-b, --birthday    : birthday items (filter or flag for what to create)
