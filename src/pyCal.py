@@ -22,6 +22,8 @@ if __name__=="__main__":
 			help="todo flag" )
 	optparser.add_option( "-b", "--birthday", action="store_true", dest="birthday", default=False,
 			help="birthday flag" )
+	optparser.add_option( "-p", "--port", action="store", dest="serverPort",
+			help="start an HTTP server on the given port on the local machine." )
 
 	(options, args) = optparser.parse_args()
 
